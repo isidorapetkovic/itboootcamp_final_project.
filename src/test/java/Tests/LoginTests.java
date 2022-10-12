@@ -1,94 +1,109 @@
 package Tests;
 
-import com.github.javafaker.Faker;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
 
-
-public class LoginTests extends BaseTest{
+public class LoginTests extends BaseTest {
     @Test
-    public void checkLogin() throws InterruptedException {
-        homePage.clickLoginButton();
+    public void checkLogin() {
+        //Verify that the route /login appears in the url of the page
+
+        homePage.loginButtonOnHomePageWebElement().click();
         String expectedResult = "https://vue-demo.daniel-avellaneda.com/login";
-        Thread.sleep(5000); //todo wait
         String actualResult = loginPage.getDriver().getCurrentUrl();
         Assert.assertEquals(actualResult, expectedResult);
     }
 
     @Test
-    public void checksInputTypes () throws InterruptedException {
-        homePage.clickLoginButton();
-        Thread.sleep(5000);
-        String expectedResult1 = "email";
-        String actualResult1 = loginPage.getEmailFieldWebElement().getAttribute("type");
-        Assert.assertEquals(actualResult1, expectedResult1);
+    public void checksInputTypes() {
+        /* Verify that the email input field for the type attribute has the value email
+        Verify that the password input field for the type attribute has the value password */
 
-        homePage.clickLoginButton();
-        Thread.sleep(5000);
-      String expectedResult2 = "password";
-      String actualResult2 = loginPage.getPasswordFieldWebElement().getAttribute("type");
-      Assert.assertEquals(actualResult2, expectedResult2);
-   }
+        homePage.loginButtonOnHomePageWebElement().click();
+        String expectedResultEmail = "email";
+        String actualResultEmail = loginPage.emailOnLoginPageWebElement().getAttribute("type");
+        Assert.assertEquals(actualResultEmail, expectedResultEmail);
 
-    @Test
-    public void displaysErrorsWhenUserDoesNotExist() throws InterruptedException {
-        //faker.internet().emailAddress()
-        homePage.clickLoginButton();
-        Thread.sleep(3000);
-        Faker faker = new Faker();
-        String email=faker.internet().emailAddress();
-        String password=faker.internet().password();
-        loginPage.login(email,password);
-        String expectedResult1 = "User does not exists";
-         WebElement actualResult1 = driver.findElement(By.xpath("//*[@id=\"app\"]/div[1]/main/div/div[2]/div/div/div[4]/div/div/div/div/div[1]/ul/li"));
-        Assert.assertEquals(actualResult1.getText(), expectedResult1);
-        //driver.getPageSource().contains("User does not exists").;
-        String expectedResult2 = "https://vue-demo.daniel-avellaneda.com/login";
-        String actualResult2 = loginPage.getDriver().getCurrentUrl();
-        Assert.assertEquals(actualResult2, expectedResult2);
+        homePage.loginButtonOnHomePageWebElement().click();
+        String expectedResultPassword = "password";
+        String actualResultPassword = loginPage.passwordOnLoginPageWebElement().getAttribute("type");
+        Assert.assertEquals(actualResultPassword, expectedResultPassword);
     }
 
     @Test
-    public void displaysErrorsWhenPasswwordIsWrong() throws InterruptedException {
-        homePage.clickLoginButton();
-        Thread.sleep(3000);
-        loginPage.login("admin@admin.com","password");
-        String expectedResult1 = "Wrong password";
-        WebElement actualResult1 = driver.findElement(By.xpath("//*[@id=\"app\"]/div[1]/main/div/div[2]/div/div/div[4]/div/div/div/div/div[1]/ul/li"));
-        Assert.assertEquals(actualResult1.getText(), expectedResult1);
-        String expectedResult2 = "https://vue-demo.daniel-avellaneda.com/login";
-        String actualResult2 = loginPage.getDriver().getCurrentUrl();
-        Assert.assertEquals(actualResult2, expectedResult2);
-   }
+    public void displaysErrorsWhenUserDoesNotExist() {
+       /* Data: random email and password created using faker library assert:
+        Verify that the error contains the message: User does not exist
+        Verify that the /login route appears in the url of the page */
+
+        homePage.loginButtonOnHomePageWebElement().click();
+        String email = faker.internet().emailAddress();
+        String password = faker.internet().password();
+        loginPage.login(email, password);
+        String expectedResultMessage = "User does not exists";
+        String actualResultMessage = loginPage.messageWhenUserDoesNotExistWebElement().getText();
+        Assert.assertEquals(actualResultMessage, expectedResultMessage);
+
+        String expectedResultLogin = "https://vue-demo.daniel-avellaneda.com/login";
+        String actualResultLogin = loginPage.getDriver().getCurrentUrl();
+        Assert.assertEquals(actualResultLogin, expectedResultLogin);
+    }
 
     @Test
-    public void Login() throws InterruptedException {
-        homePage.clickLoginButton();
-        Thread.sleep(3000);
-        loginPage.login("admin@admin.com","12345");
+    public void displaysErrorsWhenPasswwordIsWrong() {
+        /* Data: email: admin@admin.com and arbitrary password assert:
+        Verify that the error contains the message: Wrong password
+        Verify that the /login route appears in the url of the page */
+
+        homePage.loginButtonOnHomePageWebElement().click();
+        loginPage.login("admin@admin.com", "password");
+        String expectedResultMessage = "Wrong password";
+        String actualResultMessage = loginPage.messageWhenPasswordIsWrongWebElement().getText();
+        Assert.assertEquals(actualResultMessage, expectedResultMessage);
+
+        String expectedResultLogin = "https://vue-demo.daniel-avellaneda.com/login";
+        String actualResultLogin = loginPage.getDriver().getCurrentUrl();
+        Assert.assertEquals(actualResultLogin, expectedResultLogin);
+    }
+
+    @Test
+    public void Login() {
+        /* Podaci:
+        email: admin@admin.com
+        password: 12345
+        asssert: Verify that the /home route appears in the url of the page */
+
+        homePage.loginButtonOnHomePageWebElement().click();
+        loginPage.login("admin@admin.com", "12345");
         String expectedResult = "https://vue-demo.daniel-avellaneda.com/home";
+        wait.until(ExpectedConditions.urlMatches(expectedResult));
         String actualResult = loginPage.getDriver().getCurrentUrl();
         Assert.assertEquals(actualResult, expectedResult);
     }
 
-    @Test (dependsOnMethods = {"Login"})
-    public void Logout() throws InterruptedException {
-        WebElement logoutButton= driver.findElement(By.xpath("//*[@id=\"app\"]/div[1]/div/header/div/div[3]/button[2]/span"));
-        Boolean expectedResult1= true;
-        Boolean actualResult1 = logoutButton.isDisplayed();
-        Assert.assertEquals(actualResult1, expectedResult1);
-        logoutButton.click();
-        Thread.sleep(3000);
-        String expectedResult2 = "https://vue-demo.daniel-avellaneda.com/login";
-        String actualResult2 = loginPage.getDriver().getCurrentUrl();
-        Assert.assertEquals(actualResult2, expectedResult2);
+    @Test
+    public void Logout() {
+        /* Assert:
+        Verify that the logout button is visible on the page
+        Verify that the /login route appears in the url of the page
+        Verify that after trying to open the /home route, in the url
+        page reports /login route (open with driver.get home page and check
+        does it redirect you to login) */
+
+        homePage.loginButtonOnHomePageWebElement().click();
+        loginPage.login("admin@admin.com", "12345");
+        Boolean expectedResultLogoutButton = true;
+        Boolean actualResultLogoutButton = loginPage.logoutButtonOnLoginPageWebElement().isDisplayed();
+        Assert.assertEquals(actualResultLogoutButton, expectedResultLogoutButton);
+
+        loginPage.logoutButtonOnLoginPageWebElement().click();
+        String expectedResultLogin = "https://vue-demo.daniel-avellaneda.com/login";
+        String actualResultLogin = loginPage.getDriver().getCurrentUrl();
+        Assert.assertEquals(actualResultLogin, expectedResultLogin);
+
         driver.get("https://vue-demo.daniel-avellaneda.com/home");
-        String expectedResult3 = "https://vue-demo.daniel-avellaneda.com/login";
         Assert.assertTrue(driver.getCurrentUrl().contains("login"));
- }
+    }
 }

@@ -4,60 +4,56 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-public class SignUpPage extends BasePage{
-    private By nameFieldsp= By.id("name");
-    private By emailsp=By.id("email");
-    private By passwordsp=By.id("password");
-    private By confirmPasswordsp = By.id("confirmPassword");
-    private By signMeUpBtn = By.xpath("//*[@id=\"app\"]/div/main/div/div[2]/div/div/div[2]/span/form/div/div[5]/button/span");
-    //*[@id="app"]/div/main/div/div[2]/div/div/div[2]/span/form/div/div[1]/span/div/div]
-    public SignUpPage (WebDriver driver) {
-        super(driver);
-    }
-
-    public By getNameFieldsp() {
-        return nameFieldsp;
-    }
-   public By getEmailsp() {
-        return emailsp;
-    }
-    public WebElement getEmailspdWebElement () {
-        return getDriver().findElement(emailsp);
-    }
-
-    public By getPasswordsp() {
-        return passwordsp;
-    }
-    public WebElement getPasswordspdWebElement () {
-        return getDriver().findElement(passwordsp);
-    }
+import java.time.Duration;
 
 
-    public By getConfirmPasswordsp() {
-        return confirmPasswordsp;
-    }
-    public WebElement getConfirmPasswordspdWebElement () {
-        return getDriver().findElement(confirmPasswordsp);
-    }
+public class SignUpPage extends BasePage {
+    private By nameOnSignUpPage = By.id("name");
+    private By emailSignUpPage = By.id("email");
+    private By passwordSignUpPage = By.id("password");
+    private By confirmPassword = By.id("confirmPassword");
+    private By signMeUpButton = By.xpath("//*[@id=\"app\"]/div/main/div/div[2]/div/div/div[2]/span/form/div/div[5]/button/span");
+    private By messageWhenEmailAlreadyExists = By.xpath("//*[@id=\"app\"]/div[1]/main/div/div[2]/div/div/div[3]/div/div/div/div/div[1]/ul/li");
+    private By verifyMessage = By.xpath("//*[@id=\"app\"]/div[4]/div/div/div[1]"); //message appears when succesfully signed
 
-    public WebElement getSignMeUpBtn() {
-        return getDriver().findElement(signMeUpBtn);
-    }
-  public void loginSignup(String name, String email,String password, String confirmPassword) {
-        WebElement nameFieldsp= getDriver().findElement(getNameFieldsp());
-        nameFieldsp.sendKeys(name);
-        WebElement emailsp= getDriver().findElement(getEmailsp());
-        emailsp.sendKeys(email);
-        WebElement passwordsp= getDriver().findElement(getPasswordsp());
-        passwordsp.sendKeys(password);
-        WebElement confirmPasswordsp= getDriver().findElement(getConfirmPasswordsp());
-        confirmPasswordsp.sendKeys(confirmPassword);
-        WebElement signUpBtn=getSignMeUpBtn();
-        signUpBtn.click();
-
+    public SignUpPage(WebDriver driver, WebDriverWait wait) {
+        super(driver, wait);
     }
 
+    public WebElement nameSignUpPageWebElement() {
+        return getDriver().findElement(nameOnSignUpPage);
+    }
 
+    public WebElement emailSignUpPageWebElement() {
+        return getDriver().findElement(emailSignUpPage);
+    }
+
+    public WebElement passwordSignUpPageWebElement() {
+        return getDriver().findElement(passwordSignUpPage);
+    }
+
+    public WebElement confirmPasswordWebElement() {
+        return getDriver().findElement(confirmPassword);
+    }
+
+    public WebElement signMeUpButtonWebElement() {
+        return getDriver().findElement(signMeUpButton);
+    }
+
+    public WebElement messageWhenEmailAlreadyExistsWebElement() {
+        return getDriver().findElement(messageWhenEmailAlreadyExists);}
+
+    public WebElement verifyMessageWebElement() {
+        return getDriver().findElement(verifyMessage);
+    }
+
+    public void SignUp(String name, String email, String password, String confirmPassword) {
+        nameSignUpPageWebElement().sendKeys(name);
+        emailSignUpPageWebElement().sendKeys(email);
+        passwordSignUpPageWebElement().sendKeys(password);
+        confirmPasswordWebElement().sendKeys(confirmPassword);
+        signMeUpButtonWebElement().click();
+        getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+    }
 }
 

@@ -3,61 +3,57 @@ package Pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.RemoteWebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class LoginPage extends BasePage{
+import java.time.Duration;
 
 
-    private By emailField = By.id("email");
-    private By passwordField = By.id("password");
+public class LoginPage extends BasePage {
+    private By emailOnLoginPage = By.id("email");
+    private By passwordOnLoginPage = By.id("password");
+    private By loginButtonOnLoginPage = By.xpath("//*[@id=\"app\"]/div[1]/main/div/div[2]/div/div/div[3]/span/form/div/div[3]/button/span");
+    private By logoutButtonOnLoginPage = By.xpath("//*[@id=\"app\"]/div[1]/div/header/div/div[3]/button[2]/span");
+    private By messageWhenUserDoesNotExist = By.xpath("//*[@id=\"app\"]/div[1]/main/div/div[2]/div/div/div[4]/div/div/div/div/div[1]/ul/li");
+    private By messageWhenPasswordIsWrong = By.xpath("//*[@id=\"app\"]/div[1]/main/div/div[2]/div/div/div[4]/div/div/div/div/div[1]/ul/li");
 
-    private By loginButton2=By.xpath("//*[@id=\"app\"]/div[1]/main/div/div[2]/div/div/div[3]/span/form/div/div[3]/button/span");
-    private By signUp= By.xpath("//*[@id=\"app\"]/div/div/header/div/div[3]/a[4]");
-
-    public LoginPage(WebDriver driver) {
-        super(driver);
+    public LoginPage(WebDriver driver, WebDriverWait wait) {
+        super(driver, wait);
     }
 
-    public By getLoginButton() {
-        return loginButton2;
+    public WebElement emailOnLoginPageWebElement() {
+        return getDriver().findElement(emailOnLoginPage);
     }
 
-    public By getEmailField() {
-        return emailField;
-    }
-    public WebElement getEmailFieldWebElement () {
-        return getDriver().findElement(emailField);
+    public WebElement passwordOnLoginPageWebElement() {
+        return getDriver().findElement(passwordOnLoginPage);
     }
 
-    public By getPasswordField() {
-        return passwordField;
+    public WebElement loginButtonOnLoginPageWebElement() {
+        return getDriver().findElement(loginButtonOnLoginPage);
     }
 
-    public WebElement getPasswordFieldWebElement () {
-        return getDriver().findElement(passwordField);
+    public WebElement logoutButtonOnLoginPageWebElement() {
+        return getDriver().findElement(logoutButtonOnLoginPage);
     }
 
-    public By getLoginButton2() {
-        return loginButton2;
+    public WebElement messageWhenUserDoesNotExistWebElement() {
+        return getDriver().findElement(messageWhenUserDoesNotExist);
     }
 
-    public By getSignUp() {
-        return signUp;
+    public WebElement messageWhenPasswordIsWrongWebElement() {
+        return getDriver().findElement(messageWhenPasswordIsWrong);
     }
 
-    public void login (String email, String password) throws InterruptedException {
-        WebElement emailField= getDriver().findElement(getEmailField());
-        emailField.sendKeys(email);
-        WebElement passwordField= getDriver().findElement(getPasswordField());
-        passwordField.sendKeys(password);
-        WebElement loginButton2= getDriver().findElement(getLoginButton2());
-        loginButton2.click();
-        Thread.sleep(5000);
+    public void login(String email, String password) {
+        emailOnLoginPageWebElement().sendKeys(email);
+        passwordOnLoginPageWebElement().sendKeys(password);
+        loginButtonOnLoginPageWebElement().click();
+        getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
 
     }
 
-    public void clickSignUpButton() {
-        WebElement signUp=getDriver().findElement(getSignUp());
-        signUp.click();
+    public void loginWithValidCredentials() {
+        login("admin@admin.com", "12345");
     }
+
 }
